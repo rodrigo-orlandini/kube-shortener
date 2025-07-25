@@ -1,0 +1,16 @@
+services:
+  frontend:
+    container_name: frontend
+    image: rodrigoorlandini/urlshortener/frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:80
+    networks:
+      - web
+
+networks:
+  web:
+    name: web
+    driver: bridge

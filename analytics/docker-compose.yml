@@ -1,0 +1,49 @@
+services:
+  analytics:
+    container_name: analytics
+    image: rodrigoorlandini/urlshortener/analytics
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    ports:
+      - 8081:8081
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    env_file:
+      - .env
+    depends_on:
+      - analytics-database
+    networks:
+      - web
+      - analytics
+      - nats
+
+  analytics-database:
+    container_name: analytics-database
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=analytics
+    ports:
+      - 5432:5432
+    volumes:
+      - analytics_postgres_data:/var/lib/postgresql/data
+    networks:
+      - analytics
+
+networks:
+  analytics:
+    driver: bridge
+  nats:
+    external: true
+  web:
+    external: true
+
+volumes:
+  analytics_postgres_data: 

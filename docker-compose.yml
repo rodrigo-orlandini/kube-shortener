@@ -1,0 +1,14 @@
+services:
+  nats:
+    container_name: nats
+    image: nats:2.11.6
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    networks:
+      - nats
+
+networks:
+  nats:
+    name: nats
+    driver: bridge

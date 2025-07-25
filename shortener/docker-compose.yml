@@ -1,0 +1,45 @@
+services:
+  shortener:
+    container_name: shortener
+    image: rodrigoorlandini/urlshortener/shortener
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    env_file:
+      - .env
+    depends_on:
+      - shortener-database
+    networks:
+      - web
+      - shortener
+      - nats
+
+  shortener-database:
+    container_name: shortener-database
+    image: cassandra:5.0.4
+    ports:
+      - 9042:9042
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    networks:
+      - shortener
+
+networks:
+  shortener:
+    driver: bridge
+  nats:
+    external: true
+  web:
+    external: true
+
+volumes:
+  cassandra_data:
