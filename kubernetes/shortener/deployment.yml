@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shortener
+  namespace: url-shortener
+  labels:
+    app: shortener
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shortener
+  template:
+    metadata:
+      labels:
+        app: shortener
+    spec:
+      containers:
+      - name: shortener
+        image: rodrigoorlandini/urlshortener-shortener
+        ports:
+        - containerPort: 8080
+        env:
+        - name: API_PORT
+          value: "8080"
+        - name: CASSANDRA_HOSTS
+          value: "cassandra.url-shortener.svc.cluster.local:9042"
+        - name: NATS_URL
+          value: "nats://nats.url-shortener.svc.cluster.local:4222"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics
+  namespace: url-shortener
+  labels:
+    app: analytics
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics
+  template:
+    metadata:
+      labels:
+        app: analytics
+    spec:
+      containers:
+      - name: analytics
+        image: rodrigoorlandini/urlshortener-analytics
+        ports:
+        - containerPort: 8081
+        env:
+        - name: API_PORT
+          value: "8081"
+        - name: DATABASE_URL
+          value: "postgresql://postgres:postgres@postgres.url-shortener-dev.svc.cluster.local:5432/analytics"
+        - name: NATS_URL
+          value: "nats://nats.url-shortener.svc.cluster.local:4222"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        

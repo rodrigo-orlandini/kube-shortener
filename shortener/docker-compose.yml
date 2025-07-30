@@ -1,7 +1,7 @@
 services:
   shortener:
     container_name: shortener
-    image: rodrigoorlandini/urlshortener/shortener
+    image: rodrigoorlandini/urlshortener-shortener
     build:
       context: .
       dockerfile: Dockerfile

@@ -1,7 +1,7 @@
 services:
   analytics:
     container_name: analytics
-    image: rodrigoorlandini/urlshortener/analytics
+    image: rodrigoorlandini/urlshortener-analytics
     build:
       context: .
       dockerfile: Dockerfile

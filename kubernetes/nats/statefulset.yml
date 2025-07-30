@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nats
+  namespace: url-shortener
+spec:
+  serviceName: "nats"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nats
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+      - name: nats
+        image: nats:2.11.6
+        args: ['-js']
+        ports:
+        - containerPort: 4222
+          name: client
+        - containerPort: 8222
+          name: http
+        volumeMounts:
+        - name: nats-volume
+          mountPath: /data
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      volumes:
+        - name: nats-volume
+          persistentVolumeClaim:
+            claimName: nats-pvc
