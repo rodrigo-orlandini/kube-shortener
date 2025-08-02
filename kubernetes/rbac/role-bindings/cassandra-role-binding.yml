@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cassandra-role-binding
+  namespace: url-shortener
+  labels:
+    app: cassandra
+    tier: database
+subjects:
+- kind: ServiceAccount
+  name: cassandra-sa
+  namespace: url-shortener
+roleRef:
+  kind: Role
+  name: database-role
+  apiGroup: rbac.authorization.k8s.io

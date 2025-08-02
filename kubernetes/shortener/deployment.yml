@@ -16,6 +16,7 @@ spec:
       labels:
         app: shortener
     spec:
+      serviceAccountName: shortener-sa
       containers:
       - name: shortener
         image: rodrigoorlandini/urlshortener-shortener
@@ -24,9 +25,9 @@ spec:
         env:
         - name: API_PORT
           value: "8080"
-        - name: CASSANDRA_HOSTS
-          value: "cassandra.url-shortener.svc.cluster.local:9042"
-        - name: NATS_URL
+        - name: DATABASE_HOST
+          value: "cassandra.url-shortener.svc.cluster.local"
+        - name: NATS_HOST
           value: "nats://nats.url-shortener.svc.cluster.local:4222"
         livenessProbe:
           httpGet:

@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: messaging-role
+  namespace: url-shortener
+  labels:
+    app: nats
+    tier: messaging
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get"]
+  resourceNames: ["nats-config", "nats-secrets"]
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list"]
+  resourceNames: ["nats-service"]

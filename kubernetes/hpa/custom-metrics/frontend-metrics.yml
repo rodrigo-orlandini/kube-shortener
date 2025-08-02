@@ -1,0 +1,51 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend-custom-hpa
+  namespace: url-shortener
+  labels:
+    app: frontend
+    tier: frontend
+    type: custom-metrics
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+  minReplicas: 2
+  maxReplicas: 15
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Object
+    object:
+      metric:
+        name: requests-per-second
+      describedObject:
+        apiVersion: v1
+        kind: Service
+        name: frontend-service
+      target:
+        type: AverageValue
+        averageValue: 100
+  - type: Object
+    object:
+      metric:
+        name: http-requests-duration-95th-percentile
+      describedObject:
+        apiVersion: v1
+        kind: Service
+        name: frontend-service
+      target:
+        type: AverageValue
+        averageValue: 200

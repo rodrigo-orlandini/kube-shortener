@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: analytics-role
+  namespace: url-shortener
+  labels:
+    app: analytics
+    tier: backend
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get"]
+  resourceNames: ["analytics-config", "analytics-secrets", "cassandra-secrets", "nats-secrets"]
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list"]
+  resourceNames: ["cassandra-service", "nats-service"]
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["get", "list"]
+  resourceNames: ["cassandra-service", "nats-service"]

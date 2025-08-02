@@ -1,0 +1,51 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: analytics-custom-hpa
+  namespace: url-shortener
+  labels:
+    app: analytics
+    tier: backend
+    type: custom-metrics
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: analytics
+  minReplicas: 2
+  maxReplicas: 25
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 90
+  - type: Object
+    object:
+      metric:
+        name: analytics-processing-queue-size
+      describedObject:
+        apiVersion: v1
+        kind: Service
+        name: analytics-service
+      target:
+        type: AverageValue
+        averageValue: 100
+  - type: Object
+    object:
+      metric:
+        name: data-processing-latency
+      describedObject:
+        apiVersion: v1
+        kind: Service
+        name: analytics-service
+      target:
+        type: AverageValue
+        averageValue: 5000 

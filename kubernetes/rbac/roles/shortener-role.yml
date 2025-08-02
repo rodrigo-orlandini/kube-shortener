@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: shortener-role
+  namespace: url-shortener
+  labels:
+    app: shortener
+    tier: backend
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get"]
+  resourceNames: ["shortener-config", "shortener-secrets", "postgres-secrets", "nats-secrets"]
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list"]
+  resourceNames: ["postgres-service", "nats-service", "analytics-service"]
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["get", "list"]
+  resourceNames: ["postgres-service", "nats-service"]
